@@ -57,7 +57,14 @@ async def cb_handler(bot, update):
             reply_markup=ABOUT_BTN,
             disable_web_page_preview=True
         )
-
+       
+@Client.on_message(filters.private & filters.command(["about"]))
+async def about(bot, update):
+    await update.reply_text(
+        text=ABOUT_TEXT,
+        disable_web_page_preview=True,
+        reply_markup=ABOUT_BUTTONS
+    )
 
 
 # https://docs.pyrogram.org/start/examples/bot_keyboards
