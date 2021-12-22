@@ -17,7 +17,6 @@ s2tw = OpenCC('s2tw.json').convert
 # https://docs.pyrogram.org/start/examples/bot_keyboards
 # Reply with inline keyboard
 @Client.on_message(filters.private
-                   & filters.user(ALLOWED_USERS)
                    & filters.text
                    & ~filters.edited
                    & filters.regex(YTDL_REGEX))
@@ -192,16 +191,4 @@ def get_resolution(info_dict):
     return (width, height)
 
 
-@Client.on_callback_query(filters.regex("^forward_video$"))
-async def callback_query_forward_video(_, callback_query):
-    m_edited = await callback_query.message.edit_reply_markup(None)
-    m_cp = await m_edited.copy(CHANNEL_FORWARD_TO,
-                               disable_notification=True)
-    await callback_query.answer("Forwarded")
-    await m_edited.reply(m_cp.link, quote=True)
 
-
-@Client.on_callback_query(filters.regex("^ignore_video$"))
-async def callback_query_ignore_video(_, callback_query):
-    await callback_query.message.edit_reply_markup(None)
-    await callback_query.answer("Ignored")
