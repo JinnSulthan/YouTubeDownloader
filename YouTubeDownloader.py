@@ -128,38 +128,6 @@ async def callback_query_ytdl_video(_, callback_query):
     await callback_query.message.delete()
 
 
-async def send_video(message: Message, info_dict, video_file):
-    basename = video_file.rsplit(".", 1)[-2]
-    # thumbnail
-    thumbnail_url = info_dict['thumbnail']
-    thumbnail_file = basename + "." + \
-        get_file_extension_from_url(thumbnail_url)
-    # info (s2tw)
-    webpage_url = info_dict['webpage_url']
-    title = s2tw(info_dict['title'])
-    caption = f"<b><a href=\"{webpage_url}\">{title}</a></b>"
-    duration = int(float(info_dict['duration']))
-    width, height = get_resolution(info_dict)
-    await message.reply_video(
-        video_file, caption=caption, duration=duration,
-        width=width, height=height, parse_mode='HTML',
-        thumb=thumbnail_file,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Forward",
-                        callback_data="forward_video"
-                    ),
-                    InlineKeyboardButton(
-                        "Ignore",
-                        callback_data="ignore_video"
-                    )
-                ]
-            ]
-        ))
-    os.remove(video_file)
-    os.remove(thumbnail_file)
 
 
 def get_file_extension_from_url(url):
