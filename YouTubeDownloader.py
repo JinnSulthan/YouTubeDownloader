@@ -20,6 +20,8 @@ YTDL_REGEX = (r"^((?:https?:)?\/\/)"
               r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
 s2tw = OpenCC('s2tw.json').convert
 
+START_MSG = """
+"""
 
 # https://docs.pyrogram.org/start/examples/bot_keyboards
 # Reply with inline keyboard
