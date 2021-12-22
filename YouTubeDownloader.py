@@ -1,31 +1,3 @@
-"""
-tgbot, a collection of Pyrogram Smart Plugins for Telegram bots
-Copyright (C) 2021  Dash Eclipse
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
-A Pyrogram Smart Plugin for downloading audio/video from various
-streaming sites, show a button before process download
-
-# ../config.py
-ALLOWED_USERS = [
-    1234567890,
-    0123456789,
-]
-CHANNEL_FORWARD_TO = -1234567890
-"""
 import os
 import asyncio
 from urllib.parse import urlparse
@@ -33,7 +5,13 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_dl import YoutubeDL
 from opencc import OpenCC
-from config import ALLOWED_USERS, CHANNEL_FORWARD_TO
+
+Client = Client(
+    "YouTubeDownloader",
+    bot_token = os.environ["BOT_TOKEN"],
+    api_id = int(os.environ["API_ID"]),
+    api_hash = os.environ["API_HASH"]
+)
 
 YTDL_REGEX = (r"^((?:https?:)?\/\/)"
               r"?((?:www|m)\.)"
@@ -42,11 +20,63 @@ YTDL_REGEX = (r"^((?:https?:)?\/\/)"
               r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
 s2tw = OpenCC('s2tw.json').convert
 
+START_MSG = """ Hai {}, 
+Am a YouTube Downloader Bot I can Download Audio and Video From YouTube. 
+Just Send Me a YouTube video link and Download. 
+"""
+ABOUT_MSG = """
+Soon........................
+.
+"""
+
+START_BTN = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton(text="SEARCH🔎", switch_inline_query_current_chat="")
+        ],[
+        InlineKeyboardButton('ABOUT📕', callback_data='about')
+        ]]
+    )
+ABOUT_BTN = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('HOME🏡', callback_data='home'),
+        InlineKeyboardButton('CLOSE🔐', callback_data='close')
+        ]]
+    )
+
+@Client.on_callback_query()
+async def cb_handler(bot, update):
+    if update.data == "home":
+        await update.message.edit_text(
+            text=START_MSG.format(update.from_user.mention),
+            reply_markup=START_BTN,
+            disable_web_page_preview=True
+        )
+    elif update.data == "about":
+        await update.message.edit_text(
+            text=ABOUT_MSG,
+            reply_markup=ABOUT_BTN,
+            disable_web_page_preview=True
+        )
+        
+@Client.on_message(filters.private & filters.command(["start"]))
+async def start(bot, update):
+    await update.reply_text(
+        text=START_TXT,
+        disable_web_page_preview=True,
+        reply_markup=START_BTN
+    )
+@Client.on_message(filters.private & filters.command(["about"]))
+async def about(bot, update):
+    await update.reply_text(
+        text=ABOUT_TXT,
+        disable_web_page_preview=True,
+        reply_markup=ABOUT_BTN
+    )
+
 
 # https://docs.pyrogram.org/start/examples/bot_keyboards
 # Reply with inline keyboard
 @Client.on_message(filters.private
-                   & filters.user(ALLOWED_USERS)
                    & filters.text
                    & ~filters.edited
                    & filters.regex(YTDL_REGEX))
@@ -158,38 +188,6 @@ async def callback_query_ytdl_video(_, callback_query):
     await callback_query.message.delete()
 
 
-async def send_video(message: Message, info_dict, video_file):
-    basename = video_file.rsplit(".", 1)[-2]
-    # thumbnail
-    thumbnail_url = info_dict['thumbnail']
-    thumbnail_file = basename + "." + \
-        get_file_extension_from_url(thumbnail_url)
-    # info (s2tw)
-    webpage_url = info_dict['webpage_url']
-    title = s2tw(info_dict['title'])
-    caption = f"<b><a href=\"{webpage_url}\">{title}</a></b>"
-    duration = int(float(info_dict['duration']))
-    width, height = get_resolution(info_dict)
-    await message.reply_video(
-        video_file, caption=caption, duration=duration,
-        width=width, height=height, parse_mode='HTML',
-        thumb=thumbnail_file,
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "Forward",
-                        callback_data="forward_video"
-                    ),
-                    InlineKeyboardButton(
-                        "Ignore",
-                        callback_data="ignore_video"
-                    )
-                ]
-            ]
-        ))
-    os.remove(video_file)
-    os.remove(thumbnail_file)
 
 
 def get_file_extension_from_url(url):
@@ -221,16 +219,4 @@ def get_resolution(info_dict):
     return (width, height)
 
 
-@Client.on_callback_query(filters.regex("^forward_video$"))
-async def callback_query_forward_video(_, callback_query):
-    m_edited = await callback_query.message.edit_reply_markup(None)
-    m_cp = await m_edited.copy(CHANNEL_FORWARD_TO,
-                               disable_notification=True)
-    await callback_query.answer("Forwarded")
-    await m_edited.reply(m_cp.link, quote=True)
 
-
-@Client.on_callback_query(filters.regex("^ignore_video$"))
-async def callback_query_ignore_video(_, callback_query):
-    await callback_query.message.edit_reply_markup(None)
-    await callback_query.answer("Ignored")
