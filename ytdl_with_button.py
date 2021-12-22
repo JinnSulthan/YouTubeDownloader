@@ -1,31 +1,3 @@
-"""
-tgbot, a collection of Pyrogram Smart Plugins for Telegram bots
-Copyright (C) 2021  Dash Eclipse
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-
-A Pyrogram Smart Plugin for downloading audio/video from various
-streaming sites, show a button before process download
-
-# ../config.py
-ALLOWED_USERS = [
-    1234567890,
-    0123456789,
-]
-CHANNEL_FORWARD_TO = -1234567890
-"""
 import os
 import asyncio
 from urllib.parse import urlparse
@@ -33,7 +5,6 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from youtube_dl import YoutubeDL
 from opencc import OpenCC
-from config import ALLOWED_USERS, CHANNEL_FORWARD_TO
 
 YTDL_REGEX = (r"^((?:https?:)?\/\/)"
               r"?((?:www|m)\.)"
