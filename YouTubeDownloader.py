@@ -33,7 +33,7 @@ START_BTN = InlineKeyboardMarkup(
         [[
         InlineKeyboardButton(text="SEARCH🔎", switch_inline_query_current_chat="")
         ],[
-        InlineKeyboardButton('ABOUT📕', callback_data='about'),
+        InlineKeyboardButton('ABOUT📕', callback_data='about')
         ]]
     )
 ABOUT_BTN = InlineKeyboardMarkup(
