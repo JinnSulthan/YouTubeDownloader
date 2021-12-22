@@ -31,7 +31,6 @@ Soon........................
 
 START_BTN = InlineKeyboardMarkup(
         [[
-        InlineKeyboardButton('Support📕', url=f"https://telegram.me/{Config.SUPPORT}"), 
         InlineKeyboardButton(text="SEARCH🔎", switch_inline_query_current_chat="")
         ],[
         InlineKeyboardButton('ABOUT📕', callback_data='about'),
