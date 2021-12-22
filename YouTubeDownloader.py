@@ -29,6 +29,21 @@ Soon........................
 .
 """
 
+START_BTN = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('Support📕', url=f"https://telegram.me/{Config.SUPPORT}"), 
+        InlineKeyboardButton(text="SEARCH🔎", switch_inline_query_current_chat="")
+        ],[
+        InlineKeyboardButton('ABOUT📕', callback_data='about'),
+        ]]
+    )
+ABOUT_BTN = InlineKeyboardMarkup(
+        [[
+        InlineKeyboardButton('HOME🏡', callback_data='home'),
+        InlineKeyboardButton('CLOSE🔐', callback_data='close')
+        ]]
+    )
+
 @Client.on_callback_query()
 async def cb_handler(bot, update):
     if update.data == "home":
