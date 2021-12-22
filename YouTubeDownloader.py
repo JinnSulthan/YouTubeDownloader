@@ -57,13 +57,19 @@ async def cb_handler(bot, update):
             reply_markup=ABOUT_BTN,
             disable_web_page_preview=True
         )
-       
+@Client.on_message(filters.private & filters.command(["start"]))
+async def start(bot, update):
+    await update.reply_text(
+        text=ABOUT_TXT,
+        disable_web_page_preview=True,
+        reply_markup=ABOUT_BTN
+    )
 @Client.on_message(filters.private & filters.command(["about"]))
 async def about(bot, update):
     await update.reply_text(
-        text=ABOUT_TEXT,
+        text=ABOUT_TXT,
         disable_web_page_preview=True,
-        reply_markup=ABOUT_BUTTONS
+        reply_markup=ABOUT_BTN
     )
 
 
