@@ -20,7 +20,13 @@ YTDL_REGEX = (r"^((?:https?:)?\/\/)"
               r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
 s2tw = OpenCC('s2tw.json').convert
 
-START_MSG = """
+START_MSG = """ Hai {}, 
+Am a YouTube Downloader Bot I can Download Audio and Video From YouTube. 
+Just Send Me a YouTube video link and Download. 
+"""
+ABOUT_MSG = """
+Soon........................
+.
 """
 
 # https://docs.pyrogram.org/start/examples/bot_keyboards
