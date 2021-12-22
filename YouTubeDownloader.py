@@ -29,6 +29,23 @@ Soon........................
 .
 """
 
+@Client.on_callback_query()
+async def cb_handler(bot, update):
+    if update.data == "home":
+        await update.message.edit_text(
+            text=START_MSG.format(update.from_user.mention),
+            reply_markup=START_BTN,
+            disable_web_page_preview=True
+        )
+    elif update.data == "about":
+        await update.message.edit_text(
+            text=ABOUT_MSG,
+            reply_markup=ABOUT_BTN,
+            disable_web_page_preview=True
+        )
+
+
+
 # https://docs.pyrogram.org/start/examples/bot_keyboards
 # Reply with inline keyboard
 @Client.on_message(filters.private
