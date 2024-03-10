@@ -1,16 +1,15 @@
 import os
 import asyncio
-from urllib.parse import urlparse
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from youtube_dl import YoutubeDL
 from opencc import OpenCC
 
-Client = Client(
+# Initialize the Pyrogram client with the new syntax for Pyrogram v2
+app = Client(
     "YouTubeDownloader",
-    bot_token=os.environ["BOT_TOKEN"],
-    api_id=int(os.environ["API_ID"]),
-    api_hash=os.environ["API_HASH"]
+    api_id=os.environ.get("API_ID"),
+    api_hash=os.environ.get("API_HASH"),
+    bot_token=os.environ.get("BOT_TOKEN")
 )
 
 YTDL_REGEX = (r"^((?:https?:)?\/\/)"
@@ -44,8 +43,9 @@ ABOUT_BTN = InlineKeyboardMarkup(
         ]]
     )
 
-@Client.on_callback_query()
-async def cb_handler(bot, update):
+# Define callback query handlers using the new syntax
+@app.on_callback_query()
+async def callback_query_handler(bot, update):
     try:
         if update.data == "home":
             await update.message.edit_text(
@@ -62,7 +62,8 @@ async def cb_handler(bot, update):
     except Exception as e:
         print(e)
 
-@Client.on_message(filters.private & filters.command(["start"]))
+# Define message handlers
+@app.on_message(filters.private & filters.command(["start"]))
 async def start(bot, update):
     try:
         await update.reply_text(
@@ -73,7 +74,7 @@ async def start(bot, update):
     except Exception as e:
         print(e)
 
-@Client.on_message(filters.private & filters.command(["about"]))
+@app.on_message(filters.private & filters.command(["about"]))
 async def about(bot, update):
     try:
         await update.reply_text(
@@ -84,7 +85,7 @@ async def about(bot, update):
     except Exception as e:
         print(e)
 
-@Client.on_message(filters.private
+@app.on_message(filters.private
                    & filters.text
                    & ~filters.edited
                    & filters.regex(YTDL_REGEX))
@@ -112,8 +113,7 @@ async def ytdl_with_button(_, message: Message):
         print(e)
 
 # Callback query handlers
-
-@Client.on_callback_query(filters.regex("^ytdl_audio$"))
+@app.on_callback_query(filters.regex("^ytdl_audio$"))
 async def callback_query_ytdl_audio(_, callback_query):
     try:
         url = callback_query.message.reply_to_message.text
@@ -121,7 +121,7 @@ async def callback_query_ytdl_audio(_, callback_query):
     except Exception as e:
         print(e)
 
-@Client.on_callback_query(filters.regex("^ytdl_video$"))
+@app.on_callback_query(filters.regex("^ytdl_video$"))
 async def callback_query_ytdl_video(_, callback_query):
     try:
         url = callback_query.message.reply_to_message.text
@@ -131,4 +131,5 @@ async def callback_query_ytdl_video(_, callback_query):
 
 # Helper functions...
 
-Client.run()
+# Start the bot
+app.run()
